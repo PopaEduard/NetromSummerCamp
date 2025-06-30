@@ -16,9 +16,6 @@ class Stage
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 200)]
-    private ?string $location = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
@@ -42,18 +39,6 @@ class Stage
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getLocation(): ?string
-    {
-        return $this->location;
-    }
-
-    public function setLocation(string $location): static
-    {
-        $this->location = $location;
 
         return $this;
     }

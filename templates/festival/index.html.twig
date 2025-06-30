@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello FestivalController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; background: #aaa; color: black; padding: 5px 10px 10px 20px; border-radius: 30px}
+    .example-wrapper code { padding: 2px 6px; }
+    html, body{
+        background: #222;
+        color: #000;
+        height: 90%;
+    }
+</style>
+
+<div class="example-wrapper">
+    <h1>Festivals</h1>
+
+    <ul style="padding: 0;">
+        {% for festival in festivals %}
+            <li style="list-style: none; border-top: 1px solid #222; border-bottom: 1px solid #222; padding: 20px; font-size: xx-large;">
+                <a href="http://localhost:8000/festival/{{ festival.name }}/editions"; style="text-decoration: underline; color: #222">{{ festival.name }}</a>
+                <p style="margin: 0; font-size: medium;">{{ festival.location }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <nav class="pagination" aria-label="Page navigation" style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center; ">
+        <ul style="list-style:none; display:flex; gap:10px; padding-left: 5px">
+            <li>
+                {% if currentPage > 1 %}
+                    <a href="{{ path('app_festival', {'page': currentPage - 1}) }}"
+                       style="padding:6px 12px; border:1px solid #ccc; border-radius:4px; text-decoration:none; color: #222">
+                        &laquo; Previous
+                    </a>
+                {% else %}
+                    <span style="padding:6px 12px; border:1px solid #eee; border-radius:4px; color:white; cursor: default">&laquo; Previous</span>
+                {% endif %}
+            </li>
+
+            {% for i in 1..totalPages %}
+                <li>
+                    {% if i == currentPage %}
+                        <span style="padding:6px 12px; border:1px solid #007bff; border-radius:4px; background:#222; color: #aaa; font-weight:bold; cursor: default">
+                        {{ i }}
+                    </span>
+                    {% else %}
+                        <a href="{{ path('app_festival', {'page': i}) }}"
+                           style="padding:6px 12px; border:1px solid #ccc; border-radius:4px; text-decoration:none; color: #222;">
+                            {{ i }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+
+            <li>
+                {% if currentPage < totalPages %}
+                    <a href="{{ path('app_festival', {'page': currentPage + 1}) }}"
+                       style="padding:6px 12px; border:1px solid #ccc; border-radius:4px; text-decoration:none; color: #222">
+                        Next &raquo;
+                    </a>
+                {% else %}
+                    <span style="padding:6px 12px; border:1px solid #eee; border-radius:4px; color: white; cursor: default">Next &raquo;</span>
+                {% endif %}
+            </li>
+        </ul>
+        <p style="color: #222; font-size: 0.9em; white-space: nowrap; margin-left: auto; padding-right: 10px">
+            Showing {{ start }} - {{ end }} out of {{ total }} festivals
+        </p>
+    </nav>
+
+
+</div>
+{% endblock %}
