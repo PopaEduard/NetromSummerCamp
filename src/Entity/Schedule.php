@@ -27,9 +27,10 @@ class Schedule
     #[ORM\JoinColumn(nullable: false)]
     private ?Editions $edition_id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Stage $stage_id = null;
+    private ?Stage $stage = null;
+
 
     public function getId(): ?int
     {
