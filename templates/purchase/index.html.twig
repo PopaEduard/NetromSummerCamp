@@ -22,11 +22,7 @@
         <h4>{{ user.email }}</h4>
         <ul>
             {% for purchase in purchases %}
-                {% for festival in festivals %}
-                    {% if festival.id == purchase.festivalId.id %}
-                        <li>{{ festival.name }} - {{ purchase.typeId.id }}</li>
-                    {% endif %}
-                {% endfor %}
+                <li>{{ purchase.festivalId.name }} - {{ purchase.typeId.type }} - {{ purchase.typeId.price }}</li>
             {% endfor %}
         </ul>
 

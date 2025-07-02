@@ -10,6 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Festival;
 use App\Repository\FestivalRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 
 final class FestivalController extends AbstractController
 {
@@ -53,5 +56,31 @@ final class FestivalController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('festival_list');
+    }
+
+    #[Route('/festival/add', name: 'add_festival')]
+    public function new(Request $request, EntityManagerInterface $em): Response
+    {
+        $festival = new Festival();
+
+        $form = $this->createFormBuilder($festival)
+            ->add('name', TextType::class, ['label' => 'Festival name'])
+            ->add('location', TextType::class, ['label' => 'Festival location'])
+            ->add('save', SubmitType::class, ['label' => 'Create Festival'])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $festival = $form->getData();
+
+            $em->persist($festival);
+            $em->flush();
+
+            return $this->redirectToRoute('festival_list');
+        }
+
+        return $this->render('add_festival/index.html.twig', [
+            'form' => $form,
+        ]);
     }
 }

@@ -38,13 +38,10 @@ final class PurchaseController extends AbstractController
             throw $this->createNotFoundException('Purchases not found');
         }
 
-        $festivals =  $festivalRepository->findAll(); // --------------------------------------------------------------
-
         return $this->render('purchase/index.html.twig', [
             'purchases' => $purchases,
             'user' => $user,
             'details' => $userDetails,
-            'festivals' =>$festivals
         ]);
     }
 

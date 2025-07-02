@@ -85,16 +85,16 @@ class AppFixtures extends Fixture
             $manager->persist($stage);
         }
 
-//        for($i = 1; $i <= 35; $i++) {
-//            $purchase = new Purchase();
-//            $purchase->setUserId($users[array_rand($users)]);
-//            //$purchase->setId($i);
-//            $purchase->setUsed((bool)(rand(0, 1)));
-//            $purchase->setFestivalId($festivals[array_rand($festivals)]);
-//            $purchase->setTypeId($tickets[array_rand($tickets)]);
-//
-//            $manager->persist($purchase);
-//        }
+        for($i = 1; $i <= 35; $i++) {
+            $purchase = new Purchase();
+            $purchase->setUserId($users[array_rand($users)]);
+            //$purchase->setId($i);
+            $purchase->setUsed((bool)(rand(0, 1)));
+            $purchase->setFestivalId($festivals[array_rand($festivals)]);
+            $purchase->setTypeId($tickets[array_rand($tickets)]);
+
+            $manager->persist($purchase);
+        }
 
         for($i = 1; $i <= 60; $i++) {
             $edition = new Editions();
@@ -118,8 +118,8 @@ class AppFixtures extends Fixture
 //            $schedule->setEditionId($editions[array_rand($editions)]);
 //            $schedule->setStageId($stages[array_rand($stages)]);
 //            $schedule->setArtistId($artists[array_rand($artists)]);
-//
-//            $manager->persist($schedule);
+
+ //           $manager->persist($schedule);
         }
 
         for($i = 1; $i <= 50; $i++) {
