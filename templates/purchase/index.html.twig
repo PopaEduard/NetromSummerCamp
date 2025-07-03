@@ -1,30 +1,91 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EditionsController!{% endblock %}
+{% block title %}{{ details.firstName }}'s Tickets{% endblock %}
 
 {% block body %}
     <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; background: #aaa; color: black; padding: 5px 10px 10px 20px; border-radius: 20px}
-        .example-wrapper code { padding: 2px 6px; }
-        html, body{
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+            background: #aaa;
+            color: black;
+            padding: 20px;
+            border-radius: 20px;
+        }
+        .example-wrapper code {
+            padding: 2px 6px;
+        }
+        html, body {
             background: #222;
             color: #000;
             height: 90%;
         }
+        .user-nav {
+            font: 30px sans-serif;
+            background: #aaa;
+            display: inline-block;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .user-nav a {
+            text-decoration: none;
+            color: #222;
+            padding: 0 10px;
+        }
+        .ticket-item {
+            background: #ddd;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .ticket-info {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .ticket-details {
+            color: #333;
+            font-weight: bold;
+        }
     </style>
 
-    <div style="font: 30px sans-serif; background: #aaa; display: inline-block; border-radius: 4px">
-        <a href="http://localhost:8000/user" style="text-decoration: none; color: #222">Users</a>
+    <div class="user-nav">
+        <a href="{{ path('user_list') }}">Users</a>
     </div>
 
     <div class="example-wrapper">
         <h1>{{ details.firstName }} {{ details.lastName }} tickets</h1>
         <h4>{{ user.email }}</h4>
-        <ul>
-            {% for purchase in purchases %}
-                <li>{{ purchase.festivalId.name }} - {{ purchase.typeId.type }} - {{ purchase.typeId.price }}</li>
-            {% endfor %}
-        </ul>
 
+        {% if purchases is empty %}
+            <div class="ticket-item">
+                No tickets found
+            </div>
+        {% else %}
+            {% for purchase in purchases %}
+                <div class="ticket-item">
+                    <div class="ticket-info">
+                        <span class="ticket-details">{{ purchase.festivalId.name }}</span> -
+                        {{ purchase.typeId.type }} -
+                        ${{ purchase.typeId.price }}
+                    </div>
+                    <form action="{{ path('delete_purchase', {'id': purchase.id}) }}"
+                          method="POST"
+                          style="position: absolute; top: 15px; right: 20px;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ purchase.id) }}">
+                        <button type="submit" style="font-size: 20px; background: #C70101; color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer;">
+                            Delete
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}

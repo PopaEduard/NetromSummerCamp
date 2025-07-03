@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add New Festival{% endblock %}
+{% block title %}Edit {{ festival.name }}{% endblock %}
 
 {% block body %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -15,35 +15,35 @@
             padding: 20px;
             border-radius: 20px;
         }
-        .example-wrapper code { padding: 2px 6px; }
+        .example-wrapper code {
+            padding: 2px 6px;
+        }
         html, body {
             background: #222;
             color: #000;
             height: 90%;
         }
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 15px;
         }
-        .form-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
+        .form-control {
+            background-color: #ddd;
+            border: 1px solid #999;
         }
-        .create-btn {
-            background: #28a745;
-            color: white;
+        .btn-primary {
+            background-color: dodgerblue;
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-size: 18px;
-            cursor: pointer;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
         }
     </style>
 
     <div class="example-wrapper">
-        <h1>Add New Festival</h1>
+        <h1>Edit {{ festival.name }}</h1>
 
-        {{ form_start(form) }}
+        {{ form_start(form, {'action': path('edit_festival', {'id': festival.id}) }) }}
         <div class="form-group">
             {{ form_label(form.name) }}
             {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
@@ -53,11 +53,11 @@
             {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="create-btn">
-                Create Festival
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary" style="padding: 5px 15px; font-size: 18px;">
+                Save Changes
             </button>
-            <a href="{{ path('festival_list') }}" class="btn btn-secondary">
+            <a href="{{ path('festival_list') }}" class="btn btn-secondary" style="padding: 5px 15px; font-size: 18px; margin-left: 10px;">
                 Cancel
             </a>
         </div>

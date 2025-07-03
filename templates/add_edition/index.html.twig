@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Edition{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+            background: #aaa;
+            color: black;
+            padding: 15px;
+            border-radius: 20px;
+        }
+        .example-wrapper code { padding: 2px 6px; }
+        html, body {
+            background: #222;
+            color: #000;
+            height: 90%;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+    </style>
+
+    <div class="example-wrapper">
+        <h1>Add New Edition</h1>
+
+        {{ form_start(editionForm) }}
+        {{ form_start(festivalArtistForm) }}
+        <div class="form-group">
+            {{ form_label(editionForm.startDate) }}
+            {{ form_widget(editionForm.startDate, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(editionForm.endDate) }}
+            {{ form_widget(editionForm.endDate, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(festivalArtistForm.artistId) }}
+            {{ form_widget(festivalArtistForm.artistId, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(festivalArtistForm.stageId) }}
+            {{ form_widget(festivalArtistForm.stageId, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {{ form_end(editionForm) }}
+        {{ form_end(festivalArtistForm) }}
+
+        <a href="{{ path('editions_list', {'name': festival.name}) }}" class="btn btn-secondary mt-3">Editions</a>
+    </div>
+{% endblock %}

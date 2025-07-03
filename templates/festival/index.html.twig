@@ -1,13 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello FestivalController!{% endblock %}
+{% block title %}Festivals{% endblock %}
 
 {% block body %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; background: #aaa; color: black; padding: 15px; border-radius: 20px}
-        .example-wrapper code { padding: 2px 6px; }
-        html, body{
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+            background: #aaa;
+            color: black;
+            padding: 20px;
+            border-radius: 20px;
+        }
+        .example-wrapper code {
+            padding: 2px 6px;
+        }
+        html, body {
             background: #222;
             color: #000;
             height: 90%;
@@ -15,36 +26,78 @@
         .pagination {
             display: flex;
             justify-content: center;
-            margin-top: 10px;
+            margin: 10px 0;
+        }
+        .festival-box {
+            background: #ddd;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .festival-name {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        .festival-location {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .add-btn {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 10px auto;
+            text-align: center;
         }
     </style>
 
     <div class="example-wrapper">
         <h1>Festivals</h1>
 
-        <ul style="padding: 0;">
+        <div class="festival-list">
             {% for festival in festivals %}
-                <li style="list-style: none; border-top: 1px solid #222; border-bottom: 1px solid #222; padding: 12px; font-size: xx-large;">
-                    <a href="http://localhost:8000/festival/{{ festival.name }}/editions" style="text-decoration: underline; color: #222">{{ festival.name }}</a>
-                    <p style="margin: 0; font-size: medium;">{{ festival.location }}</p>
-                    <form action="{{ path('delete_festival', {'id': festival.id}) }}" method="POST" style="display: flex; justify-content: right">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ festival.id) }}">
-                        <button type="submit" style="font-size: 20px; background: #C70101; color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer;">
-                            Delete
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                <div class="festival-box">
+                    <a href="{{ path('editions_list', {'name': festival.name}) }}" class="festival-name" style="color: #222; text-decoration: underline;">
+                        {{ festival.name }}
+                    </a>
+                    <p class="festival-location">{{ festival.location }}</p>
+                    <div style="position: absolute; top: 15px; right: 20px; display: flex; gap: 10px;">
+                        <a href="{{ path('edit_festival', {'id': festival.id}) }}"
+                           style="font-size: 20px; background: dodgerblue; color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                            Edit
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
                             </svg>
-                        </button>
-                    </form>
-                </li>
+                        </a>
+
+                        <form action="{{ path('delete_festival', {'id': festival.id}) }}" method="POST" style="margin: 0;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ festival.id) }}">
+                            <button type="submit" style="font-size: 20px; background: #C70101; color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                                Delete
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="festival-box text-center">
+                    No festivals found
+                </div>
             {% endfor %}
-        </ul>
+        </div>
 
         <div class="pagination">
             {{ knp_pagination_render(festivals) }}
         </div>
-        <a href="{{ path('add_festival') }}" class="btn btn-success">Add Festival</a>
+
+        <a href="{{ path('add_festival') }}" class="btn btn-success add-btn">
+            Add Festival
+        </a>
     </div>
 {% endblock %}

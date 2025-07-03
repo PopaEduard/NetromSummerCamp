@@ -106,20 +106,20 @@ class AppFixtures extends Fixture
 
             $manager->persist($edition);
 
-//            $schedule = new Schedule();
-//
-//            $startDateTime = new \DateTime();
-//            $schedule->setStartDatetime($startDateTime);
-//
-//            $endDateTime = (clone $startDateTime)->add(new \DateInterval('PT1H'));
-//            $schedule->setEndDatetime($endDateTime);
-//
-//            //$schedule->setId($i);
-//            $schedule->setEditionId($editions[array_rand($editions)]);
-//            $schedule->setStageId($stages[array_rand($stages)]);
-//            $schedule->setArtistId($artists[array_rand($artists)]);
+            $schedule = new Schedule();
 
- //           $manager->persist($schedule);
+            $startDateTime = new \DateTime();
+            $schedule->setStartDatetime($startDateTime);
+
+            $endDateTime = (clone $startDateTime)->add(new \DateInterval('PT1H'));
+            $schedule->setEndDatetime($endDateTime);
+
+            //$schedule->setId($i);
+            $schedule->setEditionId($editions[array_rand($editions)]);
+            $schedule->setStageId($stages[array_rand($stages)]);
+            $schedule->setArtistId($artists[array_rand($artists)]);
+
+            $manager->persist($schedule);
         }
 
         for($i = 1; $i <= 50; $i++) {

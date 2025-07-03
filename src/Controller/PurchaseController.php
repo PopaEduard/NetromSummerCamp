@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Purchase;
+use App\Entity\Ticket;
 use App\Repository\FestivalRepository;
 use App\Repository\UserDetailsRepository;
 use App\Repository\UserRepository;
@@ -18,7 +18,7 @@ final class PurchaseController extends AbstractController
 {
     private int $ItemsPerPage = 1;
 
-    #[Route('/user/{id}/purchase', name: 'purchases')]
+    #[Route('/user/{id}/purchase', name: 'purchase_list')]
     public function index(UserRepository $userRepository, PurchaseRepository $purchaseRepository, UserDetailsRepository $userDetailsRepository, FestivalRepository $festivalRepository, int $id): Response {
         $user = $userRepository->findOneBy(['id' => $id]);
 
@@ -48,11 +48,12 @@ final class PurchaseController extends AbstractController
     // Delete method
     #[Route('/purchase/delete/{id}', name: 'delete_purchase', methods: ['POST', 'DELETE'])]
     public function delete(
-        EntityManagerInterface $entityManager,
+        PurchaseRepository $purchaseRepository,
+        EntityManagerInterface $em,
         Request $request,
-        int $id
+        int $id,
     ): Response {
-        $purchase = $entityManager->getRepository(Purchase::class)->find($id);
+        $purchase = $purchaseRepository->find($id);
 
         if (!$purchase) {
             throw $this->createNotFoundException('No Purchase found for id '.$id);
@@ -63,9 +64,14 @@ final class PurchaseController extends AbstractController
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
-        $entityManager->remove($purchase);
-        $entityManager->flush();
+        $ticket = new Ticket();
+        $purchase->setTypeId($ticket);
 
-        return $this->redirectToRoute('purchase_list');
+        $user_id = $purchase->getUserId()->getId();
+
+        $em->remove($purchase);
+        $em->flush();
+
+        return $this->redirectToRoute('purchase_list', ['id' => $user_id]);
     }
 }

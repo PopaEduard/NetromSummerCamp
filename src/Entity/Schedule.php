@@ -29,7 +29,7 @@ class Schedule
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Stage $stage = null;
+    private ?Stage $stage_id = null;
 
 
     public function getId(): ?int

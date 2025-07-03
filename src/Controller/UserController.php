@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Repository\PurchaseRepository;
+use App\Repository\TicketRepository;
+use App\Repository\UserDetailsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Ticket;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -34,11 +38,14 @@ final class UserController extends AbstractController
     // Delete method
     #[Route('/user/delete/{id}', name: 'delete_user', methods: ['POST', 'DELETE'])]
     public function delete(
-        EntityManagerInterface $entityManager,
+        EntityManagerInterface $em,
+        UserRepository $userRepository,
+        UserDetailsRepository $userDetailsRepository,
+        PurchaseRepository $purchaseRepository,
         Request $request,
         int $id
     ): Response {
-        $user = $entityManager->getRepository(User::class)->find($id);
+        $user = $userRepository->find($id);
 
         if (!$user) {
             throw $this->createNotFoundException('No User found for id '.$id);
@@ -49,8 +56,18 @@ final class UserController extends AbstractController
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
-        $entityManager->remove($user);
-        $entityManager->flush();
+        $userDetails = $userDetailsRepository->findOneBy(['user_id' => $user]);
+        $purchases = $purchaseRepository->findBy(['user_id' => $user]);
+
+        $ticket = new Ticket();
+        foreach($purchases as $purchase) {
+            $purchase->setTypeId($ticket);
+            $em->remove($purchase);
+        }
+
+        $em->remove($userDetails);
+        $em->remove($user);
+        $em->flush();
 
         return $this->redirectToRoute('user_list');
     }

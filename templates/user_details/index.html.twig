@@ -1,33 +1,78 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EditionsController!{% endblock %}
+{% block title %}User Details{% endblock %}
 
 {% block body %}
     <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; background: #aaa; color: black; padding: 5px 10px 10px 20px; border-radius: 20px}
-        .example-wrapper code { padding: 2px 6px; }
-        html, body{
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+            background: #aaa;
+            color: black;
+            padding: 20px;
+            border-radius: 20px;
+        }
+        .example-wrapper code {
+            padding: 2px 6px;
+        }
+        html, body {
             background: #222;
             color: #000;
             height: 90%;
         }
+        .user-nav {
+            font: 30px sans-serif;
+            background: #aaa;
+            display: inline-block;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .user-nav a {
+            text-decoration: none;
+            color: #222;
+            padding: 0 10px;
+        }
+        .detail-box {
+            background: #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .detail-item {
+            font-size: 1.2rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #999;
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        .purchase-link {
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            text-decoration: underline;
+            color: #222;
+            padding: 8px 15px;
+            background: #ddd;
+            border-radius: 5px;
+        }
     </style>
-
-    <div style="font: 30px sans-serif; background: #aaa; display: inline-block; border-radius: 4px">
-        <a href="http://localhost:8000/user" style="text-decoration: none; color: #222">Users</a>
-    </div>
 
     <div class="example-wrapper">
         <h1>{{ user.email }}</h1>
-        <ul>
-            <li>First name: {{ details.firstName }}</li>
-            <li>Last name: {{ details.lastName }}</li>
-            <li>Age: {{ details.age }}</li>
-            <li>Register date: {{ details.registerDate|date('d/m/y h:m:s') }}</li>
-            <li>Last login: {{ details.lastLogin|date('d/m/y h:m:s') }}</li>
-        </ul>
 
-        <a href="http://localhost:8000/user/{{ user.id }}/purchase" style="text-decoration: underline; color: #222">Purchases</a>
+        <div class="detail-box">
+            <div class="detail-item"><strong>First name:</strong> {{ details.firstName }}</div>
+            <div class="detail-item"><strong>Last name:</strong> {{ details.lastName }}</div>
+            <div class="detail-item"><strong>Age:</strong> {{ details.age }}</div>
+            <div class="detail-item"><strong>Register date:</strong> {{ details.registerDate|date('d/m/Y H:i:s') }}</div>
+            <div class="detail-item"><strong>Last login:</strong> {{ details.lastLogin|date('d/m/Y H:i:s') }}</div>
+        </div>
 
+        <a href="{{ path('purchase_list', {'id': user.id}) }}" class="purchase-link">
+            View Purchases
+        </a>
     </div>
 {% endblock %}
