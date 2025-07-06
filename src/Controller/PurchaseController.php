@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Purchase;
+use App\Form\PurchaseForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +21,7 @@ final class PurchaseController extends AbstractController
     private int $ItemsPerPage = 1;
 
     #[Route('/user/{id}/purchase', name: 'purchase_list')]
-    public function index(UserRepository $userRepository, PurchaseRepository $purchaseRepository, UserDetailsRepository $userDetailsRepository, FestivalRepository $festivalRepository, int $id): Response {
+    public function index(UserRepository $userRepository, PurchaseRepository $purchaseRepository, UserDetailsRepository $userDetailsRepository, int $id): Response {
         $user = $userRepository->findOneBy(['id' => $id]);
 
         if (!$user) {
@@ -73,5 +75,30 @@ final class PurchaseController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('purchase_list', ['id' => $user_id]);
+    }
+
+    #[Route('user/{id}/purchase/add', name: 'add_purchase')]
+    public function new(EntityManagerInterface $em, Request $request, UserRepository $userRepository, int $id): Response
+    {
+        $purchase  = new Purchase();
+        $form = $this->createForm(PurchaseForm::class, $purchase);
+        $user = $userRepository->findOneBy(['id' => $id]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $purchase = $form->getData();
+            $purchase->setUserId($user);
+            $purchase->setUsed(false);
+
+            $em->persist($purchase);
+            $em->flush();
+
+            return $this->redirectToRoute('purchase_list', ['id' => $id]);
+        }
+
+        return $this->render('add_purchase/index.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
+        ]);
     }
 }

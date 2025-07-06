@@ -1,66 +1,91 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit {{ festival.name }}{% endblock %}
+{% block title %}Edit Festival{% endblock %}
 
 {% block body %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
     <style>
-        .example-wrapper {
-            margin: 1em auto;
-            max-width: 800px;
+        body {
+            background: radial-gradient(circle at center, #C33C3C, #D4A910);
+            color: #222;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .edit-wrapper {
+            margin: 0 auto;
+            max-width: 600px;
             width: 95%;
             font: 18px/1.5 sans-serif;
-            background: #aaa;
-            color: black;
-            padding: 20px;
-            border-radius: 20px;
-        }
-        .example-wrapper code {
-            padding: 2px 6px;
-        }
-        html, body {
-            background: #222;
-            color: #000;
-            height: 90%;
+            background: #f7e5cd;
+            padding: 30px;
+            border-radius: 15px;
+            color: #222;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-        .form-control {
-            background-color: #ddd;
-            border: 1px solid #999;
-        }
-        .btn-primary {
-            background-color: dodgerblue;
+        .btn-save {
+            background: limegreen   ;
             border: none;
+            border-radius: 8px;
+            padding: 10px 25px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: white;
         }
-        .btn-secondary {
-            background-color: #6c757d;
+        .btn-save:hover{
+            color: black !important;
+        }
+        .btn-cancel {
+            background: #6c757d;
             border: none;
+            border-radius: 8px;
+            padding: 10px 25px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: white;
+        }
+        .btn-cancel:hover{
+            color: black !important;
+        }
+        h1 {
+            color: #D84315;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        label {
+            font-weight: 600;
+            color: #D84315;
+            margin-bottom: 8px;
+            display: block;
         }
     </style>
 
-    <div class="example-wrapper">
-        <h1>Edit {{ festival.name }}</h1>
+    <div class="edit-wrapper">
+        <h1>Edit Festival</h1>
 
         {{ form_start(form, {'action': path('edit_festival', {'id': festival.id}) }) }}
         <div class="form-group">
             {{ form_label(form.name) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Artist name'}}) }}
         </div>
         <div class="form-group">
             {{ form_label(form.location) }}
-            {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'Music genre'}}) }}
         </div>
 
-        <div style="margin-top: 20px;">
-            <button type="submit" class="btn btn-primary" style="padding: 5px 15px; font-size: 18px;">
-                Save Changes
+        <div class="text-center" style="margin-top: 30px;">
+            <button type="submit" class="btn btn-save">
+                <i class="fas fa-save mr-2"></i>Save Changes
             </button>
-            <a href="{{ path('festival_list') }}" class="btn btn-secondary" style="padding: 5px 15px; font-size: 18px; margin-left: 10px;">
-                Cancel
+            <a href="{{ path('artist_list') }}" class="btn btn-cancel ml-3">
+                <i class="fas fa-times mr-2"></i>Cancel
             </a>
         </div>
         {{ form_end(form) }}
     </div>
+
 {% endblock %}

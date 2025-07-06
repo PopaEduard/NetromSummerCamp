@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Artist;
+use App\Entity\Stage;
 use App\Form\FestivalArtistForm;
 use App\Repository\EditionsRepository;
 use App\Repository\FestivalArtistRepository;
 use App\Repository\FestivalRepository;
 use App\Repository\ScheduleRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,15 +31,7 @@ final class EditionsController extends AbstractController
 
         $editions = $editionsRepository->findBy(['festival_id' => $festival]);
 
-        if (!$editions) {
-            throw $this->createNotFoundException('Editions not found');
-        }
-
         $festivalArtists = $festivalArtistRepository->findBy(['edition_id' => $editions]);
-
-        if (!$festivalArtists) {
-            throw $this->createNotFoundException('FestivalArtist not found');
-        }
 
         return $this->render('editions/index.html.twig', [
             'editions' => $editions,
@@ -56,10 +51,6 @@ final class EditionsController extends AbstractController
         int $id
     ): Response {
         $edition = $editionsRepository->find($id);
-
-        if (!$edition) {
-            throw $this->createNotFoundException('Edition not found');
-        }
 
         $submittedToken = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('delete'.$edition->getId(), $submittedToken)) {
@@ -83,34 +74,53 @@ final class EditionsController extends AbstractController
     }
 
     #[Route('/festival/{name}/editions/add', name: 'add_edition')]
-    public function new(FestivalRepository $festivalRepository, EntityManagerInterface $em, Request $request, string $name): Response
-    {
+    public function new(
+        FestivalRepository $festivalRepository,
+        EntityManagerInterface $em,
+        Request $request,
+        string $name
+    ): Response {
         $festival = $festivalRepository->findOneBy(['name' => $name]);
 
-        $edition  = new Editions();
-        $festivalArtist = new FestivalArtist();
+        $edition = new Editions();
         $editionForm = $this->createForm(EditionsForm::class, $edition);
-        $festivalArtistForm = $this->createForm(FestivalArtistForm::class, $festivalArtist);
+
+        $artistForm = $this->createFormBuilder()
+            ->add('artists', EntityType::class, [
+                'class' => Artist::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => ['class' => 'select2']
+            ])
+            ->getForm();
 
         $editionForm->handleRequest($request);
-        $festivalArtistForm->handleRequest($request);
-        if ($editionForm->isSubmitted() && $editionForm->isValid() && $festivalArtistForm->isSubmitted() &&  $festivalArtistForm->isValid()) {
+        $artistForm->handleRequest($request);
+
+        if ($editionForm->isSubmitted() && $editionForm->isValid() &&
+            $artistForm->isSubmitted() && $artistForm->isValid()) {
+
             $edition = $editionForm->getData();
-            $festivalArtist = $festivalArtistForm->getData();
-
             $edition->setFestivalId($festival);
-            $festivalArtist->setEditionId($edition);
-
             $em->persist($edition);
-            $em->persist($festivalArtist);
-            $em->flush();
 
+            $selectedArtists = $artistForm->get('artists')->getData();
+
+            foreach ($selectedArtists as $artist) {
+                $festivalArtist = new FestivalArtist();
+                $festivalArtist->setEditionId($edition);
+                $festivalArtist->setArtistId($artist);
+                $em->persist($festivalArtist);
+            }
+
+            $em->flush();
             return $this->redirectToRoute('editions_list', ['name' => $name]);
         }
 
         return $this->render('add_edition/index.html.twig', [
-            'editionForm' => $editionForm,
-            'festivalArtistForm' => $festivalArtistForm,
+            'form' => $editionForm->createView(),
+            'artistForm' => $artistForm->createView(),
             'festival' => $festival,
         ]);
     }

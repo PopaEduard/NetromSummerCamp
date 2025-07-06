@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Festival Ticket System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: radial-gradient(circle at center, #C33C3C, #D4A910);
+            color: #eee;
+            min-height: 100vh;
+            font: 18px/1.5 sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .welcome-card {
+            background: #f7e5cd;
+            padding: 30px;
+            border-radius: 15px;
+            color: #222;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #D84315;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .ratio-button {
+            width: 150px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-festivals {
+            background: #D84315;
+        }
+
+        .btn-artists {
+            background: #1E88E5;
+        }
+
+        .btn-festivals:hover {
+            color: black;
+        }
+
+        .btn-artists:hover {
+            color: black;
+        }
+
+        .button-text {
+            position: relative;
+            z-index: 2;
+            padding: 10px;
+        }
+
+        @media (max-width: 576px) {
+            .ratio-button {
+                width: 120px;
+                height: 160px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+{% include 'nav_bar/index.html.twig' %}
+<div class="container">
+    <div class="welcome-card">
+        <h1>Welcome to Showtime!</h1>
+        <p class="welcome-message">Buy tickets for all your favorite festivals, all in one place.</p>
+
+        <div class="button-container">
+            <a href="{{ path('festival_list') }}" class="ratio-button btn-festivals" style="text-decoration: none">
+                <span class="button-text">Browse Festivals</span>
+            </a>
+            <a href="{{ path('artist_list') }}" class="ratio-button btn-artists" style="text-decoration: none">
+                <span class="button-text">Browse Artists</span>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Artist;
+use App\Form\ArtistForm;
 use App\Repository\ArtistRepository;
 use App\Repository\FestivalArtistRepository;
 use App\Repository\ScheduleRepository;
@@ -14,7 +16,7 @@ use Knp\Component\Pager\PaginatorInterface;
 
 final class ArtistController extends AbstractController
 {
-    private int $itemsPerPage = 8;
+    private int $itemsPerPage = 5;
 
     #[Route('/artist', name: 'artist_list')]
     public function index(ArtistRepository $artistRepository, PaginatorInterface $paginator, Request $request): Response
@@ -68,5 +70,53 @@ final class ArtistController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('artist_list');
+    }
+
+    #[Route('/artist/add', name: 'add_artist')]
+    public function new(EntityManagerInterface $em, Request $request): Response
+    {
+        $artist  = new Artist();
+        $form = $this->createForm(ArtistForm::class, $artist);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $artist = $form->getData();
+
+            $em->persist($artist);
+            $em->flush();
+
+            return $this->redirectToRoute('artist_list');
+        }
+
+        return $this->render('add_artist/index.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/artist/edit/{id}', name: 'edit_artist', methods: ['POST', 'GET'])]
+    public function edit(
+        int $id,
+        ArtistRepository $artistRepository,
+        EntityManagerInterface $em,
+        Request $request
+    ): Response {
+        $artist = $artistRepository->find($id);
+
+        if (!$artist) {
+            throw $this->createNotFoundException('No artist found for id '.$id);
+        }
+
+        $form = $this->createForm(ArtistForm::class, $artist);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            return $this->redirectToRoute('artist_list');
+        }
+
+        return $this->render('edit_artist/index.html.twig', [
+            'form' => $form,
+            'artist' => $artist
+        ]);
     }
 }

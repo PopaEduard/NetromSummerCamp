@@ -3,89 +3,153 @@
 {% block title %}{{ details.firstName }}'s Tickets{% endblock %}
 
 {% block body %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
     <style>
-        .example-wrapper {
-            margin: 1em auto;
+        body {
+            background: radial-gradient(circle at center, #C33C3C, #D4A910);
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .ticket-wrapper {
+            margin: 0 auto;
             max-width: 800px;
             width: 95%;
             font: 18px/1.5 sans-serif;
-            background: #aaa;
-            color: black;
-            padding: 20px;
-            border-radius: 20px;
-        }
-        .example-wrapper code {
-            padding: 2px 6px;
-        }
-        html, body {
-            background: #222;
-            color: #000;
-            height: 90%;
-        }
-        .user-nav {
-            font: 30px sans-serif;
-            background: #aaa;
-            display: inline-block;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        .user-nav a {
-            text-decoration: none;
+            background: #f7e5cd;
+            padding: 30px;
+            border-radius: 15px;
             color: #222;
-            padding: 0 10px;
+        }
+        .ticket-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #D84315;
+            padding-bottom: 15px;
+        }
+        .ticket-header h1 {
+            color: #D84315;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .ticket-header h4 {
+            color: #555;
+            font-weight: 400;
         }
         .ticket-item {
-            background: #ddd;
+            background: white;
             border-radius: 10px;
-            padding: 15px 20px;
+            padding: 20px;
             margin-bottom: 15px;
+            border-left: 4px solid #D84315;
             position: relative;
         }
         .ticket-info {
             font-size: 1.2rem;
             margin-bottom: 5px;
+            color: #333;
         }
         .ticket-details {
-            color: #333;
             font-weight: bold;
+            color: #D84315;
+        }
+        .btn-back {
+            background: #6c757d;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: white;
+            margin-bottom: 5px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn-back:hover {
+            color: black;
+        }
+        .btn-delete {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #E74C3C;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-delete:hover {
+            color: black;
+        }
+        .btn-create {
+            background: dodgerblue;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: white;
+            margin-bottom: 5px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn-create:hover {
+            color: black;
+        }
+        .no-tickets {
+            background: #f7e5cd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            color: #555;
+            font-style: italic;
+            border-left: 4px solid #D84315;
         }
     </style>
 
-    <div class="user-nav">
-        <a href="{{ path('user_list') }}">Users</a>
-    </div>
+    <div class="container">
 
-    <div class="example-wrapper">
-        <h1>{{ details.firstName }} {{ details.lastName }} tickets</h1>
-        <h4>{{ user.email }}</h4>
-
-        {% if purchases is empty %}
-            <div class="ticket-item">
-                No tickets found
+        <div class="ticket-wrapper">
+            <div class="ticket-header">
+                <h1>{{ details.firstName }} {{ details.lastName }}'s Tickets</h1>
+                <h4>{{ user.email }}</h4>
             </div>
-        {% else %}
-            {% for purchase in purchases %}
-                <div class="ticket-item">
-                    <div class="ticket-info">
-                        <span class="ticket-details">{{ purchase.festivalId.name }}</span> -
-                        {{ purchase.typeId.type }} -
-                        ${{ purchase.typeId.price }}
-                    </div>
-                    <form action="{{ path('delete_purchase', {'id': purchase.id}) }}"
-                          method="POST"
-                          style="position: absolute; top: 15px; right: 20px;">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ purchase.id) }}">
-                        <button type="submit" style="font-size: 20px; background: #C70101; color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer;">
-                            Delete
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                            </svg>
-                        </button>
-                    </form>
+
+            {% if purchases is empty %}
+                <div class="no-tickets">
+                    No tickets found
                 </div>
-            {% endfor %}
-        {% endif %}
+            {% else %}
+                {% for purchase in purchases %}
+                    <div class="ticket-item">
+                        <div class="ticket-info">
+                            <span class="ticket-details"><a href="{{ path('editions_list', {'name': purchase.festivalId.name}) }}" style="text-decoration: none; color: #D84315">{{ purchase.festivalId.name }}</a>></span> -
+                            {{ purchase.typeId.type }} -
+                            ${{ purchase.typeId.price }}
+                        </div>
+                        <form action="{{ path('delete_purchase', {'id': purchase.id}) }}" method="POST">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ purchase.id) }}">
+                            <button type="submit" class="btn-delete">
+                                Delete
+                                <i class="fas fa-trash ml-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <a href="{{ path('user_details', {'id': user.id}) }}" class="btn-back" style="text-decoration: none">
+                <i class="fas fa-arrow-left mr-2"></i>Back to User Details
+            </a>
+            <a href="{{ path('add_purchase', {'id': user.id}) }}" class="btn-create" style="text-decoration: none">
+                <i class="fas fa-arrow-left mr-2"></i>Add Ticket
+            </a>
+        </div>
     </div>
 {% endblock %}

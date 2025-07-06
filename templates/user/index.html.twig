@@ -2,79 +2,139 @@
 
 {% block title %}Users{% endblock %}
 
-{% block body %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+{% block stylesheets %}
+    {% include 'nav_bar/index.html.twig' %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
     <style>
-        .example-wrapper {
-            margin: 1em auto;
+        body {
+            background: radial-gradient(circle at center, #C33C3C, #D4A910);
+            color: #eee;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        .content-wrapper {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .user-wrapper {
+            margin: 20px auto;
             max-width: 800px;
             width: 95%;
             font: 18px/1.5 sans-serif;
-            background: #aaa;
-            color: black;
-            padding: 15px;
-            border-radius: 20px;
+            background: #f7e5cd;
+            padding: 30px;
+            border-radius: 15px;
+            color: #222;
         }
-        .example-wrapper code {
-            padding: 2px 6px;
+        .user-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            border-left: 4px solid #D84315;
         }
-        html, body {
-            background: #222;
-            color: #000;
-            height: 90%;
+        .user-email {
+            font-size: 1.5rem;
+            color: #D84315;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .user-role {
+            color: #333;
+        }
+        .action-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn-action {
+            font-size: 0.9rem;
+            color: white !important;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-action:hover {
+            color: black !important;
+        }
+        .btn-edit {
+            background: dodgerblue;
+        }
+        .btn-edit:hover{
+            color: black !important;
+        }
+        .btn-delete {
+            background: #E74C3C;
+        }
+        .btn-delete:hover{
+            color: black !important;
+        }
+        h1 {
+            color: #D84315;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
         }
         .pagination {
             display: flex;
             justify-content: center;
-            margin-top: 10px;
-        }
-        .user-box {
-            background: #ddd;
-            border-radius: 10px;
-            padding: 15px 25px;
-            margin-bottom: 15px;
-            margin-left: 15px;
-            margin-right: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .user-info {
-            font-size: 1.4rem;
-            margin-bottom: 5px;
-            padding-right: 50px;
-        }
-        .user-email {
-            text-decoration: underline;
-            color: #222;
+            margin-top: 30px;
         }
     </style>
+    {% endblock %}
 
-    <div class="example-wrapper">
-        <h1>Users</h1>
+    {% block body %}
+    <div class="content-wrapper">
+        <div class="user-wrapper">
+            <h1>Users</h1>
 
-        <div class="user-list">
-            {% for user in users %}
-                <div class="user-box">
-                    <div class="user-info">
-                        <a href="{{ path('user_details', {'id': user.id}) }}" class="user-email">{{ user.email }}</a>
+            <div class="user-list">
+                {% for user in users %}
+                    <div class="user-box">
+                        <div class="user-info">
+                            <a href="{{ path('user_details', {'id': user.id}) }}" class="user-email" style="text-decoration: none">{{ user.email }}</a>
+                            <div class="user-role">Role: {{ user.role }}</div>
+                        </div>
+                        <div class="action-buttons">
+                            <a href="{{ path('edit_user', {'id': user.id}) }}" class="btn-action btn-edit" style="text-decoration: none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                                </svg>
+                                Edit
+                            </a>
+                            <form action="{{ path('delete_user', {'id': user.id}) }}" method="POST">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="btn-action btn-delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <form action="{{ path('delete_user', {'id': user.id}) }}" method="POST" style="position: absolute; top: 15px; right: 25px;">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                        <button type="submit" style="font-size: 20px; background: #C70101; color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer;">
-                            Delete
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-            {% endfor %}
-        </div>
+                {% else %}
+                    <div class="no-users">
+                        No users found. Add your first user!
+                    </div>
+                {% endfor %}
+            </div>
 
-        <div class="pagination">
-            {{ knp_pagination_render(users) }}
+            <div class="pagination">
+                {{ knp_pagination_render(users) }}
+            </div>
         </div>
     </div>
 {% endblock %}

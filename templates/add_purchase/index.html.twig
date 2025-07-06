@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add Festival{% endblock %}
+{% block title %}Add Purchase{% endblock %}
 
 {% block body %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
     <style>
         body {
             background: radial-gradient(circle at center, #C33C3C, #D4A910);
-            color: #222;
+            color: #eee;
             min-height: 100vh;
+            padding: 20px 0;
             display: flex;
             align-items: center;
-            padding: 20px 0;
         }
-        .add-wrapper {
+        .purchase-form-wrapper {
             margin: 0 auto;
             max-width: 600px;
             width: 95%;
@@ -27,16 +27,14 @@
             margin-bottom: 20px;
         }
         .btn-save {
-            background: limegreen   ;
+            background: limegreen;
             border: none;
             border-radius: 8px;
             padding: 10px 25px;
             font-weight: bold;
             letter-spacing: 0.5px;
             color: white;
-        }
-        .btn-save:hover{
-            color: black !important;
+            transition: all 0.3s ease;
         }
         .btn-cancel {
             background: #6c757d;
@@ -46,9 +44,10 @@
             font-weight: bold;
             letter-spacing: 0.5px;
             color: white;
+            transition: all 0.3s ease;
         }
-        .btn-cancel:hover{
-            color: black !important;
+        .btn-save:hover, .btn-cancel:hover {
+            color:black;
         }
         h1 {
             color: #D84315;
@@ -61,34 +60,41 @@
             margin-bottom: 8px;
             display: block;
         }
-        ::placeholder {
-            color: #555 !important;
-            opacity: 1;
+        .form-errors {
+            color: #C70101;
+            margin-top: 5px;
+            font-size: 0.9rem;
         }
     </style>
 
-    <div class="add-wrapper">
-        <h1>Add Festival</h1>
+    <div class="purchase-form-wrapper">
+        <h1>Add New Purchase</h1>
 
         {{ form_start(form) }}
         <div class="form-group">
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Festival name'}}) }}
+            {{ form_label(form.festival_id) }}
+            {{ form_widget(form.festival_id, {'attr': {'class': 'form-control'}}) }}
+            <div class="form-errors">
+                {{ form_errors(form.festival_id) }}
+            </div>
         </div>
+
         <div class="form-group">
-            {{ form_label(form.location) }}
-            {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'Festival location'}}) }}
+            {{ form_label(form.type_id) }}
+            {{ form_widget(form.type_id, {'attr': {'class': 'form-control'}}) }}
+            <div class="form-errors">
+                {{ form_errors(form.type_id) }}
+            </div>
         </div>
 
         <div class="text-center" style="margin-top: 30px;">
             <button type="submit" class="btn btn-save">
-                <i class="fas fa-save mr-2"></i>Add Festival
+                <i class="fas fa-save mr-2"></i>Save Purchase
             </button>
-            <a href="{{ path('artist_list') }}" class="btn btn-cancel ml-3">
+            <a href="{{ path('purchase_list', {'id': user.id}) }}" class="btn btn-cancel ml-3">
                 <i class="fas fa-times mr-2"></i>Cancel
             </a>
         </div>
         {{ form_end(form) }}
     </div>
-
 {% endblock %}

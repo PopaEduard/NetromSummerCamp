@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Form\DetailsForm;
 use App\Repository\UserDetailsRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\UserDetails;
@@ -13,7 +15,7 @@ use App\Entity\User;
 
 final class UserDetailsController extends AbstractController
 {
-    #[Route('/user/{id}', name: 'user_details')]
+    #[Route('/user/{id}', name: 'user_details', requirements: ['id' => '\d+'])]
     public function index(UserRepository $userRepository, UserDetailsRepository $userDetailsRepository, int $id): Response {
         $user = $userRepository->findOneBy(['id' => $id]);
 
@@ -29,6 +31,36 @@ final class UserDetailsController extends AbstractController
 
         return $this->render('user_details/index.html.twig', [
             'details' => $userDetails,
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/user/{id}/edit', name: 'edit_details', methods: ['POST', 'GET'])]
+    public function edit(
+        int $id,
+        UserDetailsRepository $detailsRepository,
+        UserRepository $userRepository,
+        EntityManagerInterface $em,
+        Request $request
+    ): Response {
+        $details = $detailsRepository->find($id);
+        $user = $userRepository->findOneBy(['id' => $id]);
+
+        if (!$details) {
+            throw $this->createNotFoundException('No details found for id '.$id);
+        }
+
+        $form = $this->createForm(DetailsForm::class, $details);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            return $this->redirectToRoute('user_details', ['id' => $id]);
+        }
+
+        return $this->render('edit_details/index.html.twig', [
+            'form' => $form,
+            'details' => $details,
             'user' => $user,
         ]);
     }

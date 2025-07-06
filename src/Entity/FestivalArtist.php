@@ -21,10 +21,6 @@ class FestivalArtist
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist_id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Stage $stage_id = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -57,18 +53,6 @@ class FestivalArtist
     public function setArtistId(?Artist $artist_id): static
     {
         $this->artist_id = $artist_id;
-
-        return $this;
-    }
-
-    public function getStageId(): ?Stage
-    {
-        return $this->stage_id;
-    }
-
-    public function setStageId(?Stage $stage_id): static
-    {
-        $this->stage_id = $stage_id;
 
         return $this;
     }
