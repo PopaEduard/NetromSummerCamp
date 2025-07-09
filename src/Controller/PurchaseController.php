@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Festival;
 use App\Entity\Purchase;
 use App\Form\PurchaseForm;
+use App\Repository\TicketRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -101,4 +103,43 @@ final class PurchaseController extends AbstractController
             'user' => $user,
         ]);
     }
+
+    #[Route('festival/{id}/buy', name: 'buy_ticket', methods: ['GET', 'POST'])]
+    public function buy(
+        Request $request,
+        TicketRepository $ticketRepository,
+        FestivalRepository $festivalRepository,
+        EntityManagerInterface $em,
+        int $id): Response
+    {
+        $ticketTypes = $ticketRepository->findAll();
+        $festival = $festivalRepository->findOneBy(['id' => $id]);
+
+        if ($request->isMethod('POST')) {
+            $ticketType = $request->request->get('ticketType');
+            $ticket = $ticketRepository->find($ticketType);
+
+            if (!$ticket) {
+                $this->addFlash('error', 'Invalid ticket type selected.');
+                return $this->redirectToRoute('buy_ticket', ['id' => $festival->getId()]);
+            }
+
+            $purchase = new Purchase();
+            $purchase->setTypeId($ticket);
+            $purchase->setFestivalId($festival);
+            $purchase->setUserId($this->getUser());
+            $purchase->setUsed(false);
+
+            $em->persist($purchase);
+            $em->flush();
+
+            return $this->redirectToRoute('purchase_list',  ['id' => $this->getUser()->getId()]);
+        }
+
+        return $this->render('buy_ticket/index.html.twig', [
+            'festival' => $festival,
+            'ticketTypes' => $ticketTypes,
+        ]);
+    }
+
 }

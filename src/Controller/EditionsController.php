@@ -50,6 +50,8 @@ final class EditionsController extends AbstractController
         string $name,
         int $id
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $edition = $editionsRepository->find($id);
 
         $submittedToken = $request->request->get('_token');
@@ -80,6 +82,8 @@ final class EditionsController extends AbstractController
         Request $request,
         string $name
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $festival = $festivalRepository->findOneBy(['name' => $name]);
 
         $edition = new Editions();

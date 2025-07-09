@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book Ticket{% endblock %}
+
+{% block stylesheets %}
+    {% include 'nav_bar/index.html.twig' %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: radial-gradient(circle at center, #C33C3C, #D4A910);
+            color: #eee;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content-wrapper {
+            padding: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .booking-form {
+            background: #f7e5cd;
+            color: #222;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .booking-form h2 {
+            color: #D84315;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+
+        .btn-submit {
+            background: limegreen;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            color: black;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="content-wrapper">
+        <div class="booking-form">
+            <h2>Book Ticket for {{ festival.name }}</h2>
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+
+            <form method="post">
+                <div class="form-group">
+                    <label for="ticketType">Select Ticket Type:</label>
+                    <select name="ticketType" id="ticketType" class="form-control" required>
+                        {% for type in ticketTypes %}
+                            <option value="{{ type.id }}">{{ type.type }} - {{ type.price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-submit mt-3">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

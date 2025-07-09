@@ -21,7 +21,7 @@ use App\Form\FestivalForm;
 
 final class FestivalController extends AbstractController
 {
-    private int $ItemsPerPage = 5;
+    private int $itemsPerPage = 5;
 
     #[Route('/festival', name: 'festival_list')]
     public function index(FestivalRepository $festivalRepository, PaginatorInterface $paginator, Request $request): Response
@@ -31,7 +31,7 @@ final class FestivalController extends AbstractController
         $festivals = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
-            $this->ItemsPerPage
+            $this->itemsPerPage
         );
 
         return $this->render('festival/index.html.twig', [
@@ -51,6 +51,8 @@ final class FestivalController extends AbstractController
         Request $request,
         int $id
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $festival = $festivalRepository->find($id);
 
         if (!$festival) {
@@ -94,6 +96,8 @@ final class FestivalController extends AbstractController
     #[Route('/festival/add', name: 'add_festival')]
     public function new(EntityManagerInterface $em, Request $request): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $festival  = new Festival();
         $form = $this->createForm(FestivalForm::class, $festival);
 
@@ -119,6 +123,8 @@ final class FestivalController extends AbstractController
         EntityManagerInterface $em,
         Request $request
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $festival = $festivalRepository->find($id);
 
         if (!$festival) {

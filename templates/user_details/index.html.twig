@@ -50,7 +50,7 @@
             background: #6c757d;
             border: none;
             border-radius: 8px;
-            padding: 10px 25px;
+            padding: 10px 20px;
             font-weight: bold;
             letter-spacing: 0.5px;
             color: white;
@@ -64,7 +64,7 @@
             background: #8A2BE2;
             border: none;
             border-radius: 8px;
-            padding: 10px 25px;
+            padding: 10px 20px;
             margin: 3px;
             font-weight: bold;
             letter-spacing: 0.5px;
@@ -78,7 +78,7 @@
             background: dodgerblue;
             border: none;
             border-radius: 8px;
-            padding: 10px 25px;
+            padding: 10px 20px;
             margin: 3px;
             font-weight: bold;
             letter-spacing: 0.5px;
@@ -87,6 +87,20 @@
         }
         .btn-edit:hover {
             color: black !important;
+        }
+        .btn-delete {
+            background: #E74C3C;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin: 3px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: white;
+            transition: color 0.3s ease;
+        }
+        .btn-delete:hover {
+            color: black;
         }
         .action-buttons {
             display: flex;
@@ -98,6 +112,11 @@
         .left-buttons {
             display: flex;
             gap: 10px;
+        }
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
 
@@ -118,35 +137,61 @@
                 <span>{{ user.email }}</span>
             </div>
             <div class="detail-item">
-                <strong>Role:</strong>
-                <span>{{ user.role }}</span>
-            </div>
-            <div class="detail-item">
                 <strong>Age:</strong>
                 <span>{{ details.age }}</span>
             </div>
-            <div class="detail-item">
-                <strong>Register date:</strong>
-                <span>{{ details.registerDate|date('d/m/Y H:i:s') }}</span>
-            </div>
-            <div class="detail-item">
-                <strong>Last login:</strong>
-                <span>{{ details.lastLogin|date('d/m/Y H:i:s') }}</span>
-            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="detail-item">
+                    <strong>Role:</strong>
+                    <span>{{ user.role }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Register date:</strong>
+                    <span>{{ details.registerDate|date('d/m/Y H:i:s') }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Last login:</strong>
+                    <span>{{ details.lastLogin|date('d/m/Y H:i:s') }}</span>
+                </div>
+            {% endif %}
         </div>
 
         <div class="action-buttons">
             <div class="left-buttons">
+                {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('user_list') }}" class="btn-cancel" style="text-decoration: none">
                     <i class="fas fa-arrow-left mr-2"></i>Back to Users
                 </a>
+                {% else %}
+                <a href="{{ path('homepage') }}" class="btn-cancel" style="text-decoration: none">
+                    <i class="fas fa-arrow-left mr-2"></i>Home
+                </a>
+                {% endif %}
                 <a href="{{ path('purchase_list', {'id': user.id}) }}" class="btn-create" style="text-decoration: none">
                     <i class="fas fa-shopping-cart mr-2"></i>View Purchases
                 </a>
             </div>
-            <a href="{{ path('edit_details', {'id': user.id}) }}" class="btn-edit" style="text-decoration: none;">
-                <i class="fas fa-edit mr-2"></i>Edit
-            </a>
+
+            <div style="display: flex; gap: 10px;">
+                <a href="{{ path('edit_user', {'id': user.id}) }}" class="btn-edit btn-action" style="text-decoration: none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                    </svg>
+                    Edit
+                </a>
+
+                <form action="{{ path('delete_user', {'id': user.id}) }}" method="POST" style="margin: 0;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                    <button type="submit" class="btn-delete btn-action">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                        </svg>
+                        Delete Account
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}

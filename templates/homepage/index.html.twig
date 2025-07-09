@@ -109,6 +109,11 @@
             <a href="{{ path('artist_list') }}" class="ratio-button btn-artists" style="text-decoration: none">
                 <span class="button-text">Browse Artists</span>
             </a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('user_list') }}" class="ratio-button btn-artists" style="text-decoration: none; background-color: limegreen">
+                    <span class="button-text">Browse Users</span>
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>

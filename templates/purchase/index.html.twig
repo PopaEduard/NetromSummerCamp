@@ -133,23 +133,27 @@
                             {{ purchase.typeId.type }} -
                             ${{ purchase.typeId.price }}
                         </div>
-                        <form action="{{ path('delete_purchase', {'id': purchase.id}) }}" method="POST">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ purchase.id) }}">
-                            <button type="submit" class="btn-delete">
-                                Delete
-                                <i class="fas fa-trash ml-2"></i>
-                            </button>
-                        </form>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <form action="{{ path('delete_purchase', {'id': purchase.id}) }}" method="POST">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ purchase.id) }}">
+                                <button type="submit" class="btn-delete">
+                                    Delete
+                                    <i class="fas fa-trash ml-2"></i>
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
                 {% endfor %}
             {% endif %}
             <a href="{{ path('user_details', {'id': user.id}) }}" class="btn-back" style="text-decoration: none">
                 <i class="fas fa-arrow-left mr-2"></i>Back to User Details
             </a>
-            <a href="{{ path('add_purchase', {'id': user.id}) }}" class="btn-create" style="text-decoration: none">
-                <i class="fas fa-arrow-left mr-2"></i>Add Ticket
-            </a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('add_purchase', {'id': user.id}) }}" class="btn-create" style="text-decoration: none">
+                    <i class="fas fa-arrow-left mr-2"></i>Add Ticket
+                </a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

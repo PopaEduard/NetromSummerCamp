@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
             $user->setEmail("user".$i."@mail.com");
             $user->setPassword("password".$i);
             $user->setToken("token".$i);
-            $roles = ["user", "admin"];
+            $roles = ['ROLE_USER', 'ROLE_ADMIN'];
             $user->setRole($roles[array_rand($roles)]);
 
             $users[] = $user;
@@ -126,7 +126,7 @@ class AppFixtures extends Fixture
             $festivalArtist = new FestivalArtist();
             //$festivalArtist->setId($i);
             $festivalArtist->setArtistId($artists[array_rand($artists)]);
-            $festivalArtist->setStageId($stages[array_rand($stages)]);
+            //$festivalArtist->setStageId($stages[array_rand($stages)]);
             $festivalArtist->setEditionId($editions[array_rand($editions)]);
 
             $manager->persist($festivalArtist);

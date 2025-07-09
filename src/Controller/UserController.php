@@ -6,7 +6,6 @@ use App\Entity\UserDetails;
 use App\Form\DetailsForm;
 use App\Form\UserForm;
 use App\Repository\PurchaseRepository;
-use App\Repository\TicketRepository;
 use App\Repository\UserDetailsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +25,9 @@ final class UserController extends AbstractController
     #[Route('/user', name: 'user_list')]
     public function index(UserRepository $userRepository, PaginatorInterface $paginator, Request $request): Response
     {
+        if(!$this->isGranted('ROLE_ADMIN'))
+            return $this->redirectToRoute('access_denied');
+
         $query = $userRepository->createQueryBuilder('u')->getQuery();
 
         $users = $paginator->paginate(
@@ -39,7 +41,6 @@ final class UserController extends AbstractController
         ]);
     }
 
-    // Delete method
     #[Route('/user/delete/{id}', name: 'delete_user', methods: ['POST', 'DELETE'])]
     public function delete(
         EntityManagerInterface $em,
@@ -49,6 +50,9 @@ final class UserController extends AbstractController
         Request $request,
         int $id
     ): Response {
+        if(!$this->isGranted('ROLE_ADMIN'))
+            return $this->redirectToRoute('access_denied');
+
         $user = $userRepository->find($id);
 
         if (!$user) {
@@ -82,6 +86,10 @@ final class UserController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
+        if($this->getUser()) {
+            return $this->redirectToRoute('homepage');
+        }
+
         $user = new User();
         $form = $this->createForm(UserForm::class, $user);
 
@@ -101,7 +109,6 @@ final class UserController extends AbstractController
                 $user->setPassword($hashedPassword);
 
                 $details->setUserId($user);
-
                 $details->setLastLogin(new \DateTime());
                 $details->setRegisterDate(new \DateTime());
 
@@ -129,7 +136,6 @@ final class UserController extends AbstractController
         UserRepository $userRepository,
         EntityManagerInterface $em,
         Request $request,
-        UserPasswordHasherInterface $passwordHasher
     ): Response {
         $user = $userRepository->find($id);
 
@@ -143,20 +149,24 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $user->getPassword();
+            $user->setRole($form->get('role')->getData());
 
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $plainPassword
-            );
-            $user->setPassword($hashedPassword);
             $em->flush();
+
+            $this->addFlash('success', 'User updated successfully');
             return $this->redirectToRoute('user_list');
         }
 
         return $this->render('edit_user/index.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
             'user' => $user
         ]);
     }
+
+    #[Route('/access-denied', name: 'access_denied')]
+    public function accessDenied(): Response
+    {
+        return $this->render('access_denied/index.html.twig');
+    }
+
 }

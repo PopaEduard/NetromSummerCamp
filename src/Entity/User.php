@@ -132,10 +132,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getRoles(): array
     {
-        $roles = [$this->role];
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return [$this->role];
     }
 
     public function eraseCredentials(): void

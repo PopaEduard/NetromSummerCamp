@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Access Denied{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background: #f8d7da;
+        color: #721c24;
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .access-denied-container {
+        background: #f5c6cb;
+        border: 1px solid #f1b0b7;
+        padding: 40px 60px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+    p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+    }
+    a.btn-home {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #721c24;
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+    a.btn-home:hover {
+        color: black;
+    }
+</style>
+
+<div class="access-denied-container">
+    <h1>Access Denied</h1>
+    <p>Sorry, you do not have permission to view this page.</p>
+    <a href="http://localhost:8000/" class="btn-home">Go to Homepage</a>
+</div>
+{% endblock %}

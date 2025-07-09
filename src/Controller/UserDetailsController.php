@@ -10,13 +10,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\UserDetails;
-use App\Entity\User;
 
 final class UserDetailsController extends AbstractController
 {
     #[Route('/user/{id}', name: 'user_details', requirements: ['id' => '\d+'])]
     public function index(UserRepository $userRepository, UserDetailsRepository $userDetailsRepository, int $id): Response {
+        $user = $this->getUser();
+        if (!$user || $user->getId() !== $id && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createNotFoundException('User not allowed on this page');
+        }
+
         $user = $userRepository->findOneBy(['id' => $id]);
 
         if (!$user) {
@@ -43,6 +46,11 @@ final class UserDetailsController extends AbstractController
         EntityManagerInterface $em,
         Request $request
     ): Response {
+        $user = $this->getUser();
+        if (!$user || $user->getId() !== $id || !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createNotFoundException('User not allowed on this page');
+        }
+
         $details = $detailsRepository->find($id);
         $user = $userRepository->findOneBy(['id' => $id]);
 
