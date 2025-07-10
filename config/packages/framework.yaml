@@ -7,6 +7,8 @@ framework:
 
     #esi: true
     #fragments: true
+    error_controller: App\Controller\ErrorController::pageNotFound
+
 
 when@test:
     framework:

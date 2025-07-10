@@ -1,8 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add Festival{% endblock %}
+{% block title %}Create account{% endblock %}
 
 {% block body %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
     <style>
         body {
@@ -13,7 +14,7 @@
             align-items: center;
             padding: 20px 0;
         }
-        .add-wrapper {
+        .account-form-wrapper {
             margin: 0 auto;
             max-width: 600px;
             width: 95%;
@@ -21,22 +22,18 @@
             background: #f7e5cd;
             padding: 30px;
             border-radius: 15px;
-            color: #222;
         }
         .form-group {
             margin-bottom: 20px;
         }
-        .btn-save {
-            background: limegreen   ;
+        .btn-create {
+            background: limegreen;
             border: none;
             border-radius: 8px;
             padding: 10px 25px;
             font-weight: bold;
             letter-spacing: 0.5px;
             color: white;
-        }
-        .btn-save:hover{
-            color: black !important;
         }
         .btn-cancel {
             background: #6c757d;
@@ -47,8 +44,8 @@
             letter-spacing: 0.5px;
             color: white;
         }
-        .btn-cancel:hover{
-            color: black !important;
+        .btn-create:hover, .btn-cancel:hover{
+            color: black;
         }
         h1 {
             color: #D84315;
@@ -61,34 +58,46 @@
             margin-bottom: 8px;
             display: block;
         }
-        ::placeholder {
-            color: #555 !important;
-            opacity: 1;
-        }
     </style>
 
-    <div class="add-wrapper">
-        <h1>Add Festival</h1>
+    <div class="account-form-wrapper">
+        <h1>Create Account</h1>
 
-        {{ form_start(form) }}
+        {{ form_start(form, {action: path('new_user')}) }}
         <div class="form-group">
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Festival name'}}) }}
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email address'}}) }}
         </div>
         <div class="form-group">
-            {{ form_label(form.location) }}
-            {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'Festival location'}}) }}
+            {{ form_label(form.password) }}
+            {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Password'}}) }}
         </div>
+        <div class="form-group">
+            {{ form_label(detailsForm.firstName) }}
+            {{ form_widget(detailsForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'First name'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(detailsForm.lastName) }}
+            {{ form_widget(detailsForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Last name'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(detailsForm.age) }}
+            {{ form_widget(detailsForm.age, {'attr': {'class': 'form-control', 'placeholder': 'Age'}}) }}
+        </div>
+
+        {{ form_rest(detailsForm) }}
+
+        {{ form_errors(form) }}
+        {{ form_errors(detailsForm) }}
 
         <div class="text-center" style="margin-top: 30px;">
-            <button type="submit" class="btn btn-save">
-                <i class="fas fa-save mr-2"></i>Add Festival
+            <button type="submit" class="btn-create">
+                <i class="fas fa-user-plus mr-2"></i>Create Account
             </button>
-            <a href="{{ path('artist_list') }}" class="btn btn-cancel ml-3">
+            <a href="{{ path('app_login') }}" class="btn-cancel ml-3" style="text-decoration: none">
                 <i class="fas fa-times mr-2"></i>Cancel
             </a>
         </div>
         {{ form_end(form) }}
     </div>
-
 {% endblock %}

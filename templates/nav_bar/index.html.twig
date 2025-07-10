@@ -15,9 +15,10 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
             align-items: center;
             padding: 0 20px;
+            /* We want brand left, nav links center, auth right */
+            justify-content: space-between;
         }
 
         .nav-brand {
@@ -25,8 +26,9 @@
             font-weight: bold;
             color: #222;
             display: flex;
-            align-content: center;
+            align-items: center;
             margin-right: 50px;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .nav-brand-icon {
@@ -37,6 +39,8 @@
         .nav-links {
             display: flex;
             gap: 25px;
+            flex-grow: 1;
+            justify-content: center; /* center nav links */
         }
 
         .nav-link {
@@ -59,6 +63,28 @@
             font-size: 18px;
         }
 
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-shrink: 0; /* prevent shrinking */
+            color: #222;
+            font-weight: 500;
+        }
+
+        .logged-in-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .logged-in-user .nav-link-icon {
+            color: #D84315;
+            font-size: 18px;
+        }
+
         .auth-button {
             padding: 8px 20px;
             border-radius: 4px;
@@ -69,13 +95,13 @@
             align-items: center;
             gap: 8px;
             color: white !important;
-        }
-
-        .log-button {
             background: #D84315;
+            border: none;
+            cursor: pointer;
         }
-        .log-button:hover{
+        .auth-button:hover {
             color: black !important;
+            background: #b23415;
         }
     </style>
 {% endblock %}
@@ -83,14 +109,13 @@
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-brand">
-            <a href="{{ path('homepage') }}" style="text-decoration: none; color: black">
+            <a href="{{ path('homepage') }}" style="text-decoration: none; color: black;">
                 <i class="fas fa-ticket-alt nav-brand-icon"></i>
                 Showtime
             </a>
         </div>
 
         <div class="nav-links">
-
             <a href="{{ path('festival_list') }}" class="nav-link {{ app.request.get('_route') == 'festival_list' ? 'active' : '' }}">
                 <i class="fas fa-music nav-link-icon"></i>
                 <span>Festivals</span>
@@ -106,23 +131,27 @@
                     <i class="fas fa-users nav-link-icon"></i>
                     <span>Users</span>
                 </a>
-            {% elseif app.user%}
+            {% elseif app.user %}
                 <a href="{{ path('user_details', {'id': app.user.id}) }}" class="nav-link {{ app.request.get('_route') == 'user_list' ? 'active' : '' }}">
                     <i class="fas fa-users nav-link-icon"></i>
                     <span>Account details</span>
                 </a>
             {% endif %}
-
         </div>
 
-        <div class="nav-auth">
+        <div class="nav-auth" style="padding-left: 30px">
             {% if app.user %}
-                <a href="{{ path('app_logout') }}" class="auth-button log-button" style="margin-left: 40px; text-decoration: none">
+                <span class="logged-in-user">
+                    <i class="fas fa-user nav-link-icon"></i>
+                    Logged in as {{ app.user.email }}
+                </span>
+
+                <a href="{{ path('app_logout') }}" class="auth-button" style="text-decoration: none;">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
             {% else %}
-                <a href="{{ path('app_login') }}" class="auth-button log-button" style="margin-left: 40px; text-decoration: none">
+                <a href="{{ path('app_login') }}" class="auth-button" style="text-decoration: none;">
                     <i class="fas fa-sign-in-alt"></i>
                     <span>Login</span>
                 </a>

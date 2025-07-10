@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Editions;
 use App\Entity\Ticket;
 use App\Repository\EditionsRepository;
 use App\Repository\FestivalArtistRepository;
@@ -18,13 +17,17 @@ use App\Repository\FestivalRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Form\FestivalForm;
 
-
 final class FestivalController extends AbstractController
 {
     private int $itemsPerPage = 5;
 
     #[Route('/festival', name: 'festival_list')]
-    public function index(FestivalRepository $festivalRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(
+        FestivalRepository $festivalRepository,
+        EditionsRepository $editionsRepository,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response
     {
         $query = $festivalRepository->createQueryBuilder('f')->getQuery();
 
@@ -34,12 +37,14 @@ final class FestivalController extends AbstractController
             $this->itemsPerPage
         );
 
+        $lastEditions = $editionsRepository->findLastEdition();
+
         return $this->render('festival/index.html.twig', [
             'festivals' => $festivals,
+            'lastEditions' => $lastEditions,
         ]);
     }
 
-    // Delete method
     #[Route('/festival/delete/{id}', name: 'delete_festival', methods: ['POST', 'DELETE'])]
     public function delete(
         FestivalRepository $festivalRepository,
@@ -94,7 +99,10 @@ final class FestivalController extends AbstractController
     }
 
     #[Route('/festival/add', name: 'add_festival')]
-    public function new(EntityManagerInterface $em, Request $request): Response
+    public function new(
+        EntityManagerInterface $em,
+        Request $request
+    ): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -102,6 +110,7 @@ final class FestivalController extends AbstractController
         $form = $this->createForm(FestivalForm::class, $festival);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $festival = $form->getData();
 
@@ -111,8 +120,8 @@ final class FestivalController extends AbstractController
             return $this->redirectToRoute('festival_list');
         }
 
-        return $this->render('add_festival/index.html.twig', [
-            'form' => $form,
+        return $this->render('festival/add.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
@@ -139,7 +148,7 @@ final class FestivalController extends AbstractController
             return $this->redirectToRoute('festival_list');
         }
 
-        return $this->render('edit_festival/index.html.twig', [
+        return $this->render('festival/edit.html.twig', [
             'form' => $form,
             'festival' => $festival
         ]);

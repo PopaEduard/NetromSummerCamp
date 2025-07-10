@@ -4,8 +4,8 @@
 
 {% block stylesheets %}
     {% include 'nav_bar/index.html.twig' %}
-    {{ parent() }}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background: radial-gradient(circle at center, #C33C3C, #D4A910);
@@ -113,17 +113,21 @@
             font-weight: 700;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
         .no-festivals {
             color: #555;
             text-align: center;
             padding: 30px;
             font-style: italic;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 8px;
+            color: #D84315;
+        }
+        .black-hover:hover{
+            color: black;
         }
     </style>
 {% endblock %}
@@ -137,14 +141,14 @@
                 {% for festival in festivals %}
                     <div class="festival-box">
                         <div class="festival-info">
-                            <a href="{{ path('editions_list', {'name': festival.name}) }}" class="festival-name">
+                            <a href="{{ path('editions_list', {'name': festival.name}) }}" class="festival-name black-hover" style="text-decoration: none">
                                 {{ festival.name }}
                             </a>
                             <div class="festival-detail">Location: {{ festival.location }}</div>
                         </div>
                         {% if is_granted('ROLE_ADMIN') %}
                             <div class="action-buttons">
-                                <a href="{{ path('edit_festival', {'id': festival.id}) }}" class="btn-action btn-edit" style="text-decoration: none">
+                                <a href="{{ path('edit_festival', {'id': festival.id}) }}" class="btn-action btn-edit" style="text-decoration: none;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                         <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
                                     </svg>
@@ -163,11 +167,15 @@
                                 </form>
                             </div>
                         {% elseif app.user %}
-                            <div class="action-buttons">
-                                <a href="{{ path('buy_ticket', {'id': festival.id}) }}" class="btn-action add-btn" style="text-decoration: none;">
-                                    <i class="fas fa-plus mr-2"></i>Buy ticket
-                                </a>
-                            </div>
+                            {% for edition in lastEditions %}
+                                {% if edition.festivalId.id == festival.id and edition.endDate|date("Y-m-d") > "now"|date("Y-m-d") %}
+                                    <div class="action-buttons">
+                                        <a href="{{ path('buy_ticket', {'id': festival.id}) }}" class="btn-action add-btn" style="text-decoration: none;">
+                                            <i class="fas fa-plus mr-2"></i>Buy ticket
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                         {% endif %}
                     </div>
                 {% else %}
@@ -177,7 +185,7 @@
                 {% endfor %}
             </div>
 
-            <div class="pagination">
+            <div class="pagination d-flex">
                 {{ knp_pagination_render(festivals) }}
             </div>
 

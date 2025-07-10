@@ -31,7 +31,9 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
         $details = $this->userDetailsRepository->findOneBy(['user_id' => $user->getId()]);
 
         if (method_exists($details, 'setLastLogin')) {
-            $details->setLastLogin(new \DateTime());
+            $dt = new \DateTime();
+            $dt->add(new \DateInterval('PT1H'));
+            $details->setLastLogin($dt);
             $this->em->persist($details);
             $this->em->flush();
         }

@@ -22,14 +22,20 @@ use App\Form\EditionsForm;
 final class EditionsController extends AbstractController
 {
     #[Route('/festival/{name}/editions', name: 'editions_list')]
-    public function index(FestivalRepository $festivalRepository, EditionsRepository $editionsRepository, FestivalArtistRepository $festivalArtistRepository, string $name): Response {
+    public function index(
+        FestivalRepository       $festivalRepository,
+        EditionsRepository       $editionsRepository,
+        FestivalArtistRepository $festivalArtistRepository,
+        string                   $name
+    ): Response
+    {
         $festival = $festivalRepository->findOneBy(['name' => $name]);
 
         if (!$festival) {
             throw $this->createNotFoundException('Festival not found');
         }
 
-        $editions = $editionsRepository->findBy(['festival_id' => $festival]);
+        $editions = $editionsRepository->findOrderedByFestival(['festival_id' => $festival]);
 
         $festivalArtists = $festivalArtistRepository->findBy(['edition_id' => $editions]);
 
@@ -42,20 +48,21 @@ final class EditionsController extends AbstractController
 
     #[Route('/festival/{name}/editions/delete/{id}', name: 'delete_edition', methods: ['POST', 'DELETE'])]
     public function delete(
-        EntityManagerInterface $em,
-        Request $request,
-        EditionsRepository $editionsRepository,
+        EntityManagerInterface   $em,
+        Request                  $request,
+        EditionsRepository       $editionsRepository,
         FestivalArtistRepository $festivalArtistRepository,
-        ScheduleRepository $scheduleRepository,
-        string $name,
-        int $id
-    ): Response {
+        ScheduleRepository       $scheduleRepository,
+        string                   $name,
+        int                      $id
+    ): Response
+    {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $edition = $editionsRepository->find($id);
 
         $submittedToken = $request->request->get('_token');
-        if (!$this->isCsrfTokenValid('delete'.$edition->getId(), $submittedToken)) {
+        if (!$this->isCsrfTokenValid('delete' . $edition->getId(), $submittedToken)) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
@@ -77,11 +84,12 @@ final class EditionsController extends AbstractController
 
     #[Route('/festival/{name}/editions/add', name: 'add_edition')]
     public function new(
-        FestivalRepository $festivalRepository,
+        FestivalRepository     $festivalRepository,
         EntityManagerInterface $em,
-        Request $request,
-        string $name
-    ): Response {
+        Request                $request,
+        string                 $name
+    ): Response
+    {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $festival = $festivalRepository->findOneBy(['name' => $name]);
@@ -122,10 +130,76 @@ final class EditionsController extends AbstractController
             return $this->redirectToRoute('editions_list', ['name' => $name]);
         }
 
-        return $this->render('add_edition/index.html.twig', [
+        return $this->render('editions/add.html.twig', [
             'form' => $editionForm->createView(),
             'artistForm' => $artistForm->createView(),
             'festival' => $festival,
+        ]);
+    }
+
+    #[Route('/festival/{name}/editions/edit/{id}', name: 'edit_edition', methods: ['POST', 'GET'])]
+    public function edit(
+        FestivalRepository $festivalRepository,
+        EditionsRepository $editionsRepository,
+        EntityManagerInterface $em,
+        Request $request,
+        string $name,
+        int $id
+    ): Response
+    {
+        dump($request->getMethod());
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $festival = $festivalRepository->findOneBy(['name' => $name]);
+        if (!$festival) {
+            throw $this->createNotFoundException('Festival not found');
+        }
+
+        $edition = $editionsRepository->findOneBy(['id' => $id]);
+        if (!$edition) {
+            throw $this->createNotFoundException('Edition not found');
+        }
+
+        $editionForm = $this->createForm(EditionsForm::class, $edition);
+        $faForm = $this->createFormBuilder()
+            ->add('artists', EntityType::class, [
+                'class' => Artist::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => ['class' => 'select2']
+            ])
+            ->getForm();
+
+        $editionForm->handleRequest($request);
+        $faForm->handleRequest($request);
+
+        if ($editionForm->isSubmitted() && $faForm->isSubmitted()) {
+            if ($editionForm->isValid() && $faForm->isValid()) {
+                $edition->setFestivalId($festival);
+
+                foreach ($edition->getFestivalArtists() as $link) {
+                    $em->remove($link);
+                }
+
+                $selectedArtists = $faForm->get('artists')->getData();
+                foreach ($selectedArtists as $artist) {
+                    $festivalArtist = new FestivalArtist();
+                    $festivalArtist->setEditionId($edition);
+                    $festivalArtist->setArtistId($artist);
+                    $em->persist($festivalArtist);
+                }
+
+                $em->flush();
+                return $this->redirectToRoute('editions_list', ['name' => $name]);
+            }
+        }
+
+        return $this->render('editions/edit.html.twig', [
+            'form' => $editionForm->createView(),
+            'faForm' => $faForm->createView(),
+            'festival' => $festival,
+            'edition' => $edition,
         ]);
     }
 }

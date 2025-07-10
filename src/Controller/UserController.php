@@ -50,8 +50,10 @@ final class UserController extends AbstractController
         Request $request,
         int $id
     ): Response {
-        if(!$this->isGranted('ROLE_ADMIN'))
+        $user = $this->getUser();
+        if ((!$user || ($user->getId() !== $id)) && (!$this->isGranted('ROLE_ADMIN'))) {
             return $this->redirectToRoute('access_denied');
+        }
 
         $user = $userRepository->find($id);
 
@@ -124,7 +126,7 @@ final class UserController extends AbstractController
             }
         }
 
-        return $this->render('add_user/index.html.twig', [
+        return $this->render('user/add.html.twig', [
             'form' => $form->createView(),
             'detailsForm'  => $detailsForm->createView(),
         ]);
@@ -157,7 +159,7 @@ final class UserController extends AbstractController
             return $this->redirectToRoute('user_list');
         }
 
-        return $this->render('edit_user/index.html.twig', [
+        return $this->render('user/edit.html.twig', [
             'form' => $form->createView(),
             'user' => $user
         ]);

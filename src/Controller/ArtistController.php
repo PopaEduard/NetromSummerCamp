@@ -88,7 +88,7 @@ final class ArtistController extends AbstractController
             return $this->redirectToRoute('artist_list');
         }
 
-        return $this->render('add_artist/index.html.twig', [
+        return $this->render('artist/add.html.twig', [
             'form' => $form,
         ]);
     }
@@ -114,7 +114,7 @@ final class ArtistController extends AbstractController
             return $this->redirectToRoute('artist_list');
         }
 
-        return $this->render('edit_artist/index.html.twig', [
+        return $this->render('artist/edit.html.twig', [
             'form' => $form,
             'artist' => $artist
         ]);

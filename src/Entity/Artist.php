@@ -4,7 +4,10 @@ namespace App\Entity;
 
 use App\Repository\ArtistRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueEntity(fields: ['name'], message: 'This name is already used.')]
 #[ORM\Entity(repositoryClass: ArtistRepository::class)]
 class Artist
 {
@@ -53,5 +56,10 @@ class Artist
         $this->music_genre = $music_genre;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

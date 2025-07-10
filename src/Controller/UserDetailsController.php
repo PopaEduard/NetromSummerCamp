@@ -47,8 +47,8 @@ final class UserDetailsController extends AbstractController
         Request $request
     ): Response {
         $user = $this->getUser();
-        if (!$user || $user->getId() !== $id || !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createNotFoundException('User not allowed on this page');
+        if ((!$user || ($user->getId() !== $id)) && (!$this->isGranted('ROLE_ADMIN'))) {
+            return $this->redirectToRoute('access_denied');
         }
 
         $details = $detailsRepository->find($id);
@@ -66,7 +66,7 @@ final class UserDetailsController extends AbstractController
             return $this->redirectToRoute('user_details', ['id' => $id]);
         }
 
-        return $this->render('edit_details/index.html.twig', [
+        return $this->render('user_details/edit.html.twig', [
             'form' => $form,
             'details' => $details,
             'user' => $user,

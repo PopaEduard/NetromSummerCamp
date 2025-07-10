@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Festival;
 use App\Entity\Purchase;
 use App\Form\PurchaseForm;
+use App\Repository\EditionsRepository;
 use App\Repository\TicketRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ use App\Repository\UserDetailsRepository;
 use App\Repository\UserRepository;
 use App\Repository\PurchaseRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use function PHPUnit\Framework\throwException;
 
 final class PurchaseController extends AbstractController
 {
@@ -37,10 +39,6 @@ final class PurchaseController extends AbstractController
         }
 
         $purchases = $purchaseRepository->findBy(['user_id' => $user]);
-
-        if (!$purchases) {
-            throw $this->createNotFoundException('Purchases not found');
-        }
 
         return $this->render('purchase/index.html.twig', [
             'purchases' => $purchases,
@@ -79,31 +77,6 @@ final class PurchaseController extends AbstractController
         return $this->redirectToRoute('purchase_list', ['id' => $user_id]);
     }
 
-    #[Route('user/{id}/purchase/add', name: 'add_purchase')]
-    public function new(EntityManagerInterface $em, Request $request, UserRepository $userRepository, int $id): Response
-    {
-        $purchase  = new Purchase();
-        $form = $this->createForm(PurchaseForm::class, $purchase);
-        $user = $userRepository->findOneBy(['id' => $id]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $purchase = $form->getData();
-            $purchase->setUserId($user);
-            $purchase->setUsed(false);
-
-            $em->persist($purchase);
-            $em->flush();
-
-            return $this->redirectToRoute('purchase_list', ['id' => $id]);
-        }
-
-        return $this->render('add_purchase/index.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-        ]);
-    }
-
     #[Route('festival/{id}/buy', name: 'buy_ticket', methods: ['GET', 'POST'])]
     public function buy(
         Request $request,
@@ -136,7 +109,7 @@ final class PurchaseController extends AbstractController
             return $this->redirectToRoute('purchase_list',  ['id' => $this->getUser()->getId()]);
         }
 
-        return $this->render('buy_ticket/index.html.twig', [
+        return $this->render('purchase/buy.html.twig', [
             'festival' => $festival,
             'ticketTypes' => $ticketTypes,
         ]);

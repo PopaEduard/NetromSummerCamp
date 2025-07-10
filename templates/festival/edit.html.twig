@@ -1,20 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit User{% endblock %}
+{% block title %}Edit Festival{% endblock %}
 
 {% block body %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background: radial-gradient(circle at center, #C33C3C, #D4A910);
             color: #222;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 20px 0;
+            margin: 0;
+            padding: 0;
         }
         .edit-wrapper {
-            margin: 0 auto;
+            margin: 40px auto;
             max-width: 600px;
             width: 95%;
             font: 18px/1.5 sans-serif;
@@ -23,8 +23,11 @@
             border-radius: 15px;
             color: #222;
         }
+        .form-group {
+            margin-bottom: 20px;
+        }
         .btn-save {
-            background: limegreen   ;
+            background: limegreen;
             border: none;
             border-radius: 8px;
             padding: 10px 25px;
@@ -32,8 +35,8 @@
             letter-spacing: 0.5px;
             color: white;
         }
-        .btn-save:hover{
-            color:black !important;
+        .btn-save:hover {
+            color: black !important;
         }
         .btn-cancel {
             background: #6c757d;
@@ -44,11 +47,12 @@
             letter-spacing: 0.5px;
             color: white;
         }
-        .btn-cancel:hover{
+        .btn-cancel:hover {
             color: black !important;
         }
         h1 {
             color: #D84315;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             margin-bottom: 30px;
             text-align: center;
         }
@@ -60,24 +64,26 @@
         }
     </style>
 
-    <div class="edit-wrapper">
-        <h1>Edit User</h1>
+    {% include 'nav_bar/index.html.twig' %}
 
-        {{ form_start(form, {'action': path('edit_user', {'id': user.id}) }) }}
+    <div class="edit-wrapper">
+        <h1>Edit Festival</h1>
+
+        {{ form_start(form, {'action': path('edit_festival', {'id': festival.id}) }) }}
         <div class="form-group">
-            {{ form_label(form.email) }}
-            {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Artist name'}}) }}
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Artist name'}}) }}
         </div>
         <div class="form-group">
-            {{ form_label(form.role) }}
-            {{ form_widget(form.role, {'attr': {'class': 'form-control', 'placeholder': 'Music genre'}}) }}
+            {{ form_label(form.location) }}
+            {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'Music genre'}}) }}
         </div>
 
         <div class="text-center" style="margin-top: 30px;">
             <button type="submit" class="btn btn-save">
                 <i class="fas fa-save mr-2"></i>Save Changes
             </button>
-            <a href="{{ path('user_list') }}" class="btn btn-cancel ml-3">
+            <a href="{{ path('festival_list') }}" class="btn btn-cancel ml-3">
                 <i class="fas fa-times mr-2"></i>Cancel
             </a>
         </div>

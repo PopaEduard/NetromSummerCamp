@@ -1,30 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add Purchase{% endblock %}
+{% block title %}Add New Artist{% endblock %}
 
 {% block body %}
+    {% include 'nav_bar/index.html.twig' %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background: radial-gradient(circle at center, #C33C3C, #D4A910);
-            color: #eee;
+            color: #222;
             min-height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            align-items: center;
+            padding: 0;
+            margin: 0;
         }
-        .purchase-form-wrapper {
-            margin: 0 auto;
+        .artist-form-wrapper {
+            margin: 40px auto;
             max-width: 600px;
             width: 95%;
             font: 18px/1.5 sans-serif;
             background: #f7e5cd;
             padding: 30px;
             border-radius: 15px;
-            color: #222;
-        }
-        .form-group {
-            margin-bottom: 20px;
         }
         .btn-save {
             background: limegreen;
@@ -33,8 +30,10 @@
             padding: 10px 25px;
             font-weight: bold;
             letter-spacing: 0.5px;
-            color: white;
-            transition: all 0.3s ease;
+            color: white ;
+        }
+        .btn-save:hover{
+            color: black !important;
         }
         .btn-cancel {
             background: #6c757d;
@@ -44,10 +43,12 @@
             font-weight: bold;
             letter-spacing: 0.5px;
             color: white;
-            transition: all 0.3s ease;
         }
-        .btn-save:hover, .btn-cancel:hover {
-            color:black;
+        .btn-cancel:hover{
+            color: black !important;
+        }
+        .form-group {
+            margin-bottom: 20px;
         }
         h1 {
             color: #D84315;
@@ -60,38 +61,30 @@
             margin-bottom: 8px;
             display: block;
         }
-        .form-errors {
-            color: #C70101;
-            margin-top: 5px;
-            font-size: 0.9rem;
+        ::placeholder {
+            color: #555 !important;
+            opacity: 1;
         }
     </style>
 
-    <div class="purchase-form-wrapper">
-        <h1>Add New Purchase</h1>
+    <div class="artist-form-wrapper">
+        <h1>Add New Artist</h1>
 
         {{ form_start(form) }}
         <div class="form-group">
-            {{ form_label(form.festival_id) }}
-            {{ form_widget(form.festival_id, {'attr': {'class': 'form-control'}}) }}
-            <div class="form-errors">
-                {{ form_errors(form.festival_id) }}
-            </div>
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Artist name'}}) }}
         </div>
-
         <div class="form-group">
-            {{ form_label(form.type_id) }}
-            {{ form_widget(form.type_id, {'attr': {'class': 'form-control'}}) }}
-            <div class="form-errors">
-                {{ form_errors(form.type_id) }}
-            </div>
+            {{ form_label(form.musicGenre) }}
+            {{ form_widget(form.musicGenre, {'attr': {'class': 'form-control', 'placeholder': 'Music genre'}}) }}
         </div>
 
         <div class="text-center" style="margin-top: 30px;">
-            <button type="submit" class="btn btn-save">
-                <i class="fas fa-save mr-2"></i>Save Purchase
+            <button type="submit" class="btn-save">
+                <i class="fas fa-save mr-2"></i>Save Artist
             </button>
-            <a href="{{ path('purchase_list', {'id': user.id}) }}" class="btn btn-cancel ml-3">
+            <a href="{{ path('artist_list') }}" class="btn-cancel ml-3" style="text-decoration: none;">
                 <i class="fas fa-times mr-2"></i>Cancel
             </a>
         </div>

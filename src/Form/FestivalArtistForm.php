@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Artist;
+use App\Entity\FestivalArtist;
+use App\Repository\FestivalArtistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -12,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FestivalArtistForm extends AbstractType
 {
@@ -38,7 +41,11 @@ class FestivalArtistForm extends AbstractType
                 'multiple' => true,
                 'placeholder' => 'Select artists',
                 'required' => true
-            ])
-        ;
+            ]);
+    }
+    public function configureOptions(OptionsResolver $resolver): void{
+        $resolver->setDefaults([
+            'data_class' => FestivalArtist::class,
+        ]);
     }
 }

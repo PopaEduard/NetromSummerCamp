@@ -2,14 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\Purchase;
 use App\Entity\Ticket;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Entity\Festival; // Assuming you have a Festival entity
+use App\Entity\Festival;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PurchaseForm extends AbstractType
 {
@@ -48,7 +50,13 @@ class PurchaseForm extends AbstractType
                 'choices' => $ticketChoices,
                 'placeholder' => 'Select a ticket type',
                 'required' => true
-            ])
-        ;
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Purchase::class
+        ]);
     }
 }
